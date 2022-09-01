@@ -5,13 +5,14 @@ import DeactivateModal from "../components/modals/Deactivate";
 import { User } from "../models/post.model";
 import { Car } from "../models/car.model";
 import {getOrCreateConnection} from "../utils";
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 
 // For Pagination
 import React, { useEffect, useState } from "react";
 import ReactDOM from 'react-dom';
 import ReactPaginate from 'react-paginate';
 
-const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 const Test: NextPage = () => {
     return (
@@ -25,7 +26,7 @@ const Test: NextPage = () => {
                     <NewUserModal />
                     <DeactivateModal />
                     <div className={"pt-12 px-4"}>
-                        <PaginatedItems itemsPerPage={8} />
+                        <PaginatedItems itemsPerPage={10} />
                     </div>
                 </div>
             </main>
@@ -119,7 +120,6 @@ function PaginatedItems({ itemsPerPage }) {
     useEffect(() => {
         // Fetch items from another resources.
         const endOffset = itemOffset + itemsPerPage;
-        console.log(`Loading items from ${itemOffset} to ${endOffset}`);
         // @ts-ignore
         setCurrentItems(items.slice(itemOffset, endOffset));
         setPageCount(Math.ceil(items.length / itemsPerPage));
@@ -128,9 +128,6 @@ function PaginatedItems({ itemsPerPage }) {
     // Invoke when user click to request another page.
     const handlePageClick = (event: { selected: number; }) => {
         const newOffset = (event.selected * itemsPerPage) % items.length;
-        console.log(
-            `User requested page number ${event.selected}, which is offset ${newOffset}`
-        );
         setItemOffset(newOffset);
     };
 
@@ -138,12 +135,23 @@ function PaginatedItems({ itemsPerPage }) {
         <>
             <Items currentItems={currentItems} />
             <ReactPaginate
-                breakLabel="..."
-                nextLabel="next"
+                className={"flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 w-20"}
+                pageLinkClassName={"relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"}
+                activeLinkClassName={"bg-gray-100"}
+                previousLinkClassName={"relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"}
+                nextLinkClassName={"relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"}
+                breakLabel={
+                    <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true"/>
+                }
                 onPageChange={handlePageClick}
                 pageRangeDisplayed={5}
                 pageCount={pageCount}
-                previousLabel="previous"
+                nextLabel={
+                    <><span className="sr-only">Next</span><ChevronRightIcon className="h-5 w-5" aria-hidden="true"/></>
+                }
+                previousLabel={
+                    <><span className="sr-only">Previous</span><ChevronLeftIcon className="h-5 w-5" aria-hidden="true"/></>
+                }
                 // @ts-ignore
                 renderOnZeroPageCount={null}
             />
