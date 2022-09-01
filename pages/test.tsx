@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef } from "react";
 import {NextPage} from "next";
 import Head from 'next/head';
 import NewUserModal from "../components/modals/NewUser";
@@ -8,9 +9,13 @@ import {getOrCreateConnection} from "../utils";
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 
 // For Pagination
-import React, { useEffect, useState } from "react";
-import ReactDOM from 'react-dom';
 import ReactPaginate from 'react-paginate';
+
+// For Charts
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -25,8 +30,13 @@ const Test: NextPage = () => {
                 <div className={"text-center p-4"}>
                     <NewUserModal />
                     <DeactivateModal />
+
                     <div className={"pt-12 px-4"}>
                         <PaginatedItems itemsPerPage={10} />
+                    </div>
+
+                    <div className={"pt-12 pb-4 w-96 flex justify-center"}>
+                        <DoughnutChartExample />
                     </div>
                 </div>
             </main>
@@ -157,4 +167,115 @@ function PaginatedItems({ itemsPerPage }) {
             />
         </>
     );
+}
+
+function LineChartExample() {
+    const canvasEl = useRef(null);
+
+    const colors = {
+        purple: {
+            default: "rgba(149, 76, 233, 1)",
+            half: "rgba(149, 76, 233, 0.5)",
+            quarter: "rgba(149, 76, 233, 0.25)",
+            zero: "rgba(149, 76, 233, 0)"
+        },
+        indigo: {
+            default: "rgba(80, 102, 120, 1)",
+            quarter: "rgba(80, 102, 120, 0.25)"
+        }
+    };
+
+    useEffect(() => {
+        // @ts-ignore
+        const ctx = canvasEl.current.getContext("2d");
+        // const ctx = document.getElementById("myChart");
+
+        const gradient = ctx.createLinearGradient(0, 16, 0, 600);
+        gradient.addColorStop(0, colors.purple.half);
+        gradient.addColorStop(0.65, colors.purple.quarter);
+        gradient.addColorStop(1, colors.purple.zero);
+
+        const weight = [60.0, 60.2, 59.1, 61.4, 59.9, 60.2, 59.8, 58.6, 59.6, 59.2];
+
+        const labels = [
+            "Week 1",
+            "Week 2",
+            "Week 3",
+            "Week 4",
+            "Week 5",
+            "Week 6",
+            "Week 7",
+            "Week 8",
+            "Week 9",
+            "Week 10"
+        ];
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    backgroundColor: gradient,
+                    label: "Orders",
+                    data: weight,
+                    fill: true,
+                    borderWidth: 2,
+                    borderColor: colors.purple.default,
+                    lineTension: 0.2,
+                    pointBackgroundColor: colors.purple.default,
+                    pointRadius: 3
+                }
+            ]
+        };
+        const config = {
+            type: "line",
+            data: data
+        };
+        // @ts-ignore
+        const myLineChart = new Chart(ctx, config);
+
+        return function cleanup() {
+            myLineChart.destroy();
+        };
+    });
+
+    return (
+        <div className="App">
+            <span>Chart Example</span>
+            <canvas id="myChart" ref={canvasEl} height="100" />
+        </div>
+    );
+}
+
+function DoughnutChartExample() {
+    const doughnutData = {
+        labels: ['Red', 'Blue', 'Yellow', 'Green'],
+        datasets: [
+            {
+                label: '# of Votes',
+                data: [12, 19, 3, 5],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                ],
+                borderColor: [
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)',
+                ],
+                borderWidth: 2,
+            },
+        ],
+    };
+
+    return (
+        <>
+            <Doughnut data={doughnutData} />
+        </>
+    )
 }
