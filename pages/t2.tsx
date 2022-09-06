@@ -13,7 +13,6 @@ const AnotherTest: NextPage = () => {
     const handleRemoveClick = () => {
         if (counter > 1) {
             setCounter(counter - 1)
-            handleOnChange()
         }
     }
 
