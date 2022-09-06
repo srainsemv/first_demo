@@ -86,8 +86,8 @@ class Footer extends Component<any, any> {
                         </div>
                     </div>
 
-                    <div className="pt-32 lg:flex lg:items-center lg:justify-between xl:mt-0">
-                        <div>
+                    <div className="pt-32 grid grid-cols-1 md:grid-cols-2 gap-4 lg:flex lg:items-center lg:justify-between xl:mt-0">
+                        <div className={""}>
                             <img
                                 src={"/logos/logo.svg"}
                             />
@@ -96,14 +96,14 @@ class Footer extends Component<any, any> {
                             <a className="text-4xl font-medium text-white">
                                 888-457-SOLO
                             </a>
-                            <div className="mt-2 flex space-x-8 md:order-2">
+                            <div className="mt-2 flex space-x-8 md:order-2 text-center md:text-right">
                                 <a href={"#"} className="text-white hover:text-gray-200">
                                     <span className="">Terms of Use</span>
                                 </a>
                                 <a href={"#"} className="text-white hover:text-gray-200">
                                     <span className="">Privacy Policy</span>
                                 </a>
-                                <span className="text-white">&copy; 2022 Electra Meccanica. All Rights Reserved.</span>
+                                <p className="text-white">&copy; 2022 Electra Meccanica. All Rights Reserved.</p>
                             </div>
                         </div>
                     </div>
