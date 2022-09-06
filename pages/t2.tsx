@@ -29,10 +29,6 @@ const AnotherTest: NextPage = () => {
             </Head>
 
             <main className={"text-center pt-10"}>
-                {Object.keys(inputValues).map((c) => {
-                    return <p key={c}>{inputValues[c]}</p>;
-                })}
-
                 {Array.from(Array(counter)).map((c, index) => {
                     return (
                         <div className={"py-2"} key={c}>
