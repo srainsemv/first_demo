@@ -2,7 +2,7 @@ import {NextPage} from "next";
 import Head from "next/head";
 import { useState } from "react";
 
-const t2: NextPage = () => {
+const AnotherTest: NextPage = () => {
     const [inputValues, setInputValues] = useState({});
     const [counter, setCounter] = useState(1);
 
@@ -66,4 +66,4 @@ const t2: NextPage = () => {
     )
 }
 
-export default t2
+export default AnotherTest
