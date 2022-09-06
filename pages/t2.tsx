@@ -18,6 +18,10 @@ const t2: NextPage = () => {
         setInputValues({ ...inputValues, ...abc });
     };
 
+    const handleSubmission = () => {
+        console.log(Object.values(inputValues))
+    }
+
     return (
         <>
             <Head>
@@ -26,15 +30,14 @@ const t2: NextPage = () => {
 
             <main className={"text-center pt-10"}>
                 {Object.keys(inputValues).map((c) => {
-                    return <p>{inputValues[c]}</p>;
+                    return <p key={c}>{inputValues[c]}</p>;
                 })}
 
                 {Array.from(Array(counter)).map((c, index) => {
                     return (
-                        <div className={"py-2"}>
+                        <div className={"py-2"} key={c}>
                             <input
                                 onChange={handleOnChange}
-                                key={c}
                                 className={`w-96 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${index}`}
                                 placeholder={"Enter your data"}
                                 type="text"
@@ -48,6 +51,14 @@ const t2: NextPage = () => {
                         className={"bg-blue-500 text-white py-4 px-8 rounded-lg"}
                     >
                         New Text Field
+                    </button>
+                </div>
+                <div className={"pb-4"}>
+                    <button
+                        onClick={handleSubmission}
+                        className={"bg-blue-500 text-white py-4 px-8 rounded-lg"}
+                    >
+                        Submit
                     </button>
                 </div>
             </main>
