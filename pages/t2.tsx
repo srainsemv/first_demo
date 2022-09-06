@@ -11,9 +11,8 @@ const AnotherTest: NextPage = () => {
         console.log(counter);
     };
 
-    const handleOnChange = (e: { target: { className: string | number; value: any; }; }) => {
-        const abc = {};
-        // @ts-ignore
+    const handleOnChange = (e: { target: { className: string | number; value: any; } }) => {
+        const abc: {[index: string]:any} = {};
         abc[e.target.className] = e.target.value;
         setInputValues({ ...inputValues, ...abc });
     };
