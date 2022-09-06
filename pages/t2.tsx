@@ -6,10 +6,16 @@ const AnotherTest: NextPage = () => {
     const [inputValues, setInputValues] = useState({});
     const [counter, setCounter] = useState(1);
 
-    const handleClick = () => {
+    const handleNewClick = () => {
         setCounter(counter + 1);
-        console.log(counter);
     };
+
+    const handleRemoveClick = () => {
+        if (counter > 1) {
+            setCounter(counter - 1)
+            handleOnChange()
+        }
+    }
 
     const handleOnChange = (e: { target: { className: string | number; value: any; } }) => {
         const abc: {[index: string]:any} = {};
@@ -42,10 +48,16 @@ const AnotherTest: NextPage = () => {
                 })}
                 <div className={"py-4"}>
                     <button
-                        onClick={handleClick}
+                        onClick={handleNewClick}
                         className={"bg-blue-500 text-white py-4 px-8 rounded-lg"}
                     >
-                        New Text Field
+                        Add New Field
+                    </button>
+                    <button
+                        onClick={handleRemoveClick}
+                        className={"bg-red-500 text-white py-4 px-8 rounded-lg ml-2"}
+                    >
+                        Remove Last Field
                     </button>
                 </div>
                 <div className={"pb-4"}>
@@ -53,7 +65,7 @@ const AnotherTest: NextPage = () => {
                         onClick={handleSubmission}
                         className={"bg-blue-500 text-white py-4 px-8 rounded-lg"}
                     >
-                        Submit
+                        Submit Form
                     </button>
                 </div>
             </main>
