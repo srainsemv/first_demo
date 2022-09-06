@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Bulevar Regular";
+    src: url("../public/fonts/Bulevar-Regular.otf");
+}
+
+@font-face {
+    font-family: "Bulevar Poster";
+    src: url("../public/fonts/Bulevar-Poster.otf");
+}

@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Hero from "../components/home/hero";
 import MeetSolo from "../components/home/MeetSolo";
+import Footer from "../components/globals/Footer";
 
 const Home: NextPage = () => {
   return (
@@ -16,6 +17,7 @@ const Home: NextPage = () => {
           <div className="bg-white">
               <Hero />
               <MeetSolo />
+              <Footer />
           </div>
       </main>
     </div>

@@ -5,7 +5,12 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        bulevar: ["Bulevar Regular"],
+        bulevarp: ["Bulevar Poster"],
+      },
+    },
   },
   plugins: [
       require('tailwind-scrollbar-hide'),
