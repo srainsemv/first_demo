@@ -6,7 +6,7 @@ import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 
-const calendar: NextPage = () => {
+const CalendarComponent: NextPage = () => {
     const [date, setDate] = useState(new Date());
     return (
         <>
@@ -26,7 +26,7 @@ const calendar: NextPage = () => {
                         </div>
 
                         <div className={"h-fit px-4"}>
-                            {listOfAvailableTimes(getSelectedDate(date))}
+                            {ListOfAvailableTimes(getSelectedDate(date))}
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,7 @@ const calendar: NextPage = () => {
     )
 }
 
-export default calendar
+export default CalendarComponent
 
 function getSelectedDate(selectedDate: Date) {
     const dateNum = selectedDate.getDate() < 10 ? `0${selectedDate.getDate()}` : selectedDate.getDate()
@@ -45,7 +45,7 @@ function getSelectedDate(selectedDate: Date) {
     return `${monthNum}/${dateNum}/${selectedDate.getFullYear()}`
 }
 
-function listOfAvailableTimes(selectedDate: string) {
+function ListOfAvailableTimes(selectedDate: string) {
     const availability = [
         {
             "date": "09/19/2022",
