@@ -5,6 +5,8 @@ import Calendar from 'react-calendar'
 import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
+import {faker} from '@faker-js/faker';
+import UpdateNumber from "../components/calendar/UpdateNumber";
 
 const CalendarComponent: NextPage = () => {
     const [date, setDate] = useState(new Date());
@@ -29,6 +31,10 @@ const CalendarComponent: NextPage = () => {
                             {ListOfAvailableTimes(getSelectedDate(date))}
                         </div>
                     </div>
+                </div>
+
+                <div className={"pt-20 bg-red-200"}>
+                    <UpdateNumber />
                 </div>
 
             </main>
@@ -94,6 +100,14 @@ function ListOfAvailableTimes(selectedDate: string) {
         {
             "date": "09/30/2022",
             "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
+        },
+        {
+            "date": "10/01/2022",
+            "times": ["10:00 AM", "1:00 PM", "2:00 PM", "4:00 PM", "5:00 PM"]
+        },
+        {
+            "date": "10/02/2022",
+            "times": ["9:00 AM", "4:00 PM", "5:00 PM"]
         }
     ]
     const [selectedTime, setSelectedTime] = useState() // Leave empty so no cell is selected by default
@@ -106,7 +120,7 @@ function ListOfAvailableTimes(selectedDate: string) {
                 {availability.map((date) => (
                     date.date == selectedDate ?
                         date.times.length == 0 ?
-                            <div className={"bg-gray-100 rounded-lg py-4 px-6 w-full flex justify-center mb-4 sm:col-span-3"}>
+                            <div key={1} className={"bg-gray-100 rounded-lg py-4 px-6 w-full flex justify-center mb-4 sm:col-span-3"}>
                                 <h1>No availability</h1>
                             </div>
                             :
