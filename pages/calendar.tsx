@@ -5,7 +5,6 @@ import Calendar from 'react-calendar'
 import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
-import {faker} from '@faker-js/faker';
 import UpdateNumber from "../components/calendar/UpdateNumber";
 
 const CalendarComponent: NextPage = () => {
@@ -23,18 +22,19 @@ const CalendarComponent: NextPage = () => {
                     <div className={"grid grid-cols-1 md:grid-cols-2 gap-6"}>
                         <div className={"grid grid-rows-1 gap-4"}>
                             <div className="flex justify-center pt-4 h-fit">
-                                <Calendar onChange={setDate} value={date} className={"rounded-lg"}/>
+                                <Calendar onChange={setDate} value={date} className={"rounded-lg"} calendarType={"US"} minDate={new Date()} maxDate={new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())}/>
                             </div>
                         </div>
 
                         <div className={"h-fit px-4"}>
+                            <p className={"font-semibold text-center pt-2"}>{date.toLocaleString('default', { month: 'long' })} {date.getDate()}, {date.getFullYear()}</p>
                             {ListOfAvailableTimes(getSelectedDate(date))}
                         </div>
                     </div>
                 </div>
 
-                <div className={"pt-20 bg-red-200"}>
-                    <UpdateNumber />
+                <div className={"mt-20 bg-red-200"}>
+                    {/* <UpdateNumber/> */}
                 </div>
 
             </main>
@@ -132,7 +132,7 @@ function ListOfAvailableTimes(selectedDate: string) {
                                     classNames(
                                         checked ? 'border-transparent' : 'border-gray-300',
                                         active ? 'border-blue-500 ring-2 ring-blue-500' : '',
-                                        'relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none'
+                                        'relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:bg-gray-50'
                                     )
                                 }
                             >

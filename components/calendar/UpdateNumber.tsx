@@ -12,7 +12,7 @@ const UpdateNumber = () => {
     return (
         <>
             <p>
-                {faker.name.fullName()}
+                {faker.internet.email()}
             </p>
         </>
     )

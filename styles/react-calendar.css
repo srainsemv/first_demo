@@ -1,9 +1,10 @@
 .react-calendar {
-    width: 350px;
+    width: 366px; /* 350px + 4px padding on all sides (16px total) = 366px */
     max-width: 100%;
     background: white;
     border: 1px solid #a0a096;
     line-height: 1.125em;
+    padding: 4px;
 }
 .react-calendar--doubleView {
     width: 700px;
@@ -83,35 +84,37 @@
     line-height: 16px;
     height: 50px;
 }
-.react-calendar__tile:disabled {
+.react-calendar__tile:disabled { /* For disabled dates (min/max dates) */
     background-color: #f0f0f0;
 }
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus { /* For hovering over a date */
     background-color: #e6e6e6;
-    border-radius: 25px;
+    border-radius: 0; /* Set to 25px to get circle dots */
 }
 .react-calendar__tile--now { /* For default active (today's date) on load */
     background: lightgray;
-    border-radius: 25px;
+    border-radius: 0; /* Set to 25px to get circle dots */
 }
-.react-calendar__tile--hasActive {
+.react-calendar__tile--hasActive { /* For the tiles when clicking on the month/year above calendar */
     background: #006edc;
+    color: #ffffff;
+    border-radius: 0;
 }
 .react-calendar__tile--hasActive:enabled:hover,
 .react-calendar__tile--hasActive:enabled:focus {
     background: #006edc;
-    border-radius: 25px;
+    border-radius: 0;
 }
 .react-calendar__tile--active {
     background: #006edc;
-    color: white;
-    border-radius: 25px;
+    color: #ffffff;
+    border-radius: 0; /* Set to 25px to get circle dots */
 }
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus { /* For a newly selected date */
     background: #006edc;
-    border-radius: 25px;
+    border-radius: 0; /* Set to 25px to get circle dots */
 }
 .react-calendar--selectRange .react-calendar__tile--hover {
     background-color: #e6e6e6;
