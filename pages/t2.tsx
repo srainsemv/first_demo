@@ -12,7 +12,7 @@ const AnotherTest: NextPage = () => {
 
     const handleRemoveClick = () => {
         if (counter > 1) {
-            setCounter(counter - 1)
+            setCounter(counter - 1);
         }
     }
 
@@ -23,7 +23,12 @@ const AnotherTest: NextPage = () => {
     };
 
     const handleSubmission = () => {
-        console.log(Object.values(inputValues))
+        const formData = Object.values(inputValues)
+        for (let i = 0; i < counter; i++) {
+            if (formData[i] != undefined) {
+                console.log(formData[i])
+            }
+        }
     }
 
     return (
