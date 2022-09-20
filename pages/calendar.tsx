@@ -1,6 +1,6 @@
 import {NextPage} from "next";
 import Head from "next/head";
-import {JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useState} from "react";
+import {useState} from "react";
 import Calendar from 'react-calendar'
 import {RadioGroup} from '@headlessui/react'
 import {CheckCircleIcon} from '@heroicons/react/20/solid'
@@ -9,8 +9,9 @@ import {gql} from "@apollo/client";
 import client from '../lib/apollo-client';
 
 // @ts-ignore
-const CalendarComponent: NextPage = ({locations}) => {
+const CalendarComponent: NextPage = ({vehicles}) => {
     const [date, setDate] = useState(new Date());
+
     return (
         <>
             <Head>
@@ -37,14 +38,14 @@ const CalendarComponent: NextPage = ({locations}) => {
                     </div>
                 </div>
 
-                <div className={"mt-20 bg-red-200"}>
-                    {locations.map((location: { id: number; name: string; }) => (
-                        <p key={location.id}>
-                            {location.name}
+                <div className={"mt-20 bg-red-200 py-4"}>
+                    <p className={"pb-4 text-center font-semibold"}>List of Cars</p>
+                    {vehicles.map((vehicle: { id: number; gen: string; color: string; vin: string; vehicle_locations: {id: number; name: string; phone: string;} }) => (
+                        <p key={vehicle.id} className={"text-center pb-1"}>
+                            {vehicle.vin} - {vehicle.color} - {vehicle.vehicle_locations.name}
                         </p>
                     ))}
                 </div>
-
             </main>
         </>
     )
@@ -55,12 +56,18 @@ export default CalendarComponent
 export async function getStaticProps() {
     const { data } = await client.query({
         query: gql`
-        query GetLocations {
-            emv_locations {
+        query GetVehiclesAtLocation {
+            emv_test_drive_vehicles {
                 id
-                name
-                phone
-                state
+                gen
+                color
+                vin
+                location
+                vehicle_locations {
+                    id
+                    name
+                    phone
+                }
             }
         }
       `,
@@ -68,7 +75,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            locations: data.emv_locations,
+            vehicles: data.emv_test_drive_vehicles,
         },
     };
 }
