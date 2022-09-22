@@ -1,53 +1,90 @@
 import {NextPage} from "next";
 import Head from "next/head";
-import {useState} from "react";
+import {Component, useState} from "react";
 import Calendar from 'react-calendar'
 import {RadioGroup} from '@headlessui/react'
 import {CheckCircleIcon} from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 import {gql} from "@apollo/client";
 import client from '../lib/apollo-client';
+import {EnvelopeIcon, MapPinIcon, PhoneIcon, UserIcon} from "@heroicons/react/24/outline";
 
 // @ts-ignore
 const CalendarComponent: NextPage = ({locations}) => {
     const [date, setDate] = useState(new Date());
-    const [vehicles, setVehicles] = useState([])
+    const [times, setTimes] = useState<string[]>([])
 
-    const fetchVehicleData = async () => {
-        const {data} = await client.query({
-            query: gql`
-            query GetLocationAvailability {
-              testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
-                id
-                vehicle_availability_relationship_array(where: {date: {_eq: "09/22/2022"}}) {
-                  date
-                  t8
-                  t9
-                  t10
-                  t11
-                  t12
-                  t13
-                  t14
-                  t15
-                  t16
-                  t17
-                  t18
-                  t19
-                  t20
+    const fetchVehicleAvailabilityData = async (event: { preventDefault: () => void; }) => {
+        event.preventDefault()
+        try {
+            const {data} = await client.query({
+                query: gql`
+                query GetLocationAvailability {
+                  testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
+                    vehicle_availability_relationship_array(where: {date: {_eq: "09/22/2022"}}) {
+                      t8
+                      t9
+                      t10
+                      t11
+                      t12
+                      t13
+                      t14
+                      t15
+                      t16
+                      t17
+                      t18
+                      t19
+                      t20
+                    }
+                  }
                 }
-              }
-            }
-          `,
-        });
+              `,
+            });
 
-        console.log(data.testdrive_vehicles)
-
-        return setVehicles(data.testdrive_vehicles)
+            await arrayOfDayAvailability(data.testdrive_vehicles)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
-    const handleClick = (event: { preventDefault: () => void; }) => {
-        event.preventDefault()
-        fetchVehicleData().then((data) => {})
+    const arrayOfDayAvailability = async (data: { vehicle_availability_relationship_array: { t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean; }[]; }[]) => {
+        let fullListOfTimes: string[] = []
+
+        data.map((vehicle: {
+            vehicle_availability_relationship_array: {
+                t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
+            }[];
+        }) => (
+            vehicle.vehicle_availability_relationship_array.map(async (value: {
+                t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
+            }) => (
+                (
+                    getListOfAvailableTimesForEachVehicle(value).map((timeString) => (
+                        fullListOfTimes.indexOf(timeString) === -1 ? fullListOfTimes.push(timeString) : null
+                    ))
+                )
+            ))
+        ))
+
+       setTimes(fullListOfTimes)
+    }
+
+    const getListOfAvailableTimesForEachVehicle = (data: { t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean; }) => {
+        let tempTimes: string[] = []
+        data.t8 ? tempTimes.push("8:00 AM") : null
+        data.t9 ? tempTimes.push("9:00 AM") : null
+        data.t10 ? tempTimes.push("10:00 AM") : null
+        data.t11 ? tempTimes.push("11:00 AM") : null
+        data.t12 ? tempTimes.push("12:00 PM") : null
+        data.t13 ? tempTimes.push("1:00 PM") : null
+        data.t14 ? tempTimes.push("2:00 PM") : null
+        data.t15 ? tempTimes.push("3:00 PM") : null
+        data.t16 ? tempTimes.push("4:00 PM") : null
+        data.t17 ? tempTimes.push("5:00 PM") : null
+        data.t18 ? tempTimes.push("6:00 PM") : null
+        data.t19 ? tempTimes.push("7:00 PM") : null
+        data.t20 ? tempTimes.push("8:00 PM") : null
+        return tempTimes
     }
 
     return (
@@ -60,6 +97,8 @@ const CalendarComponent: NextPage = ({locations}) => {
 
             <main>
                 <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"}>
+                    <LocationsView locations={locations} hidden={false} />
+
                     <div className={"grid grid-cols-1 md:grid-cols-2 gap-6"}>
                         <div className={"grid grid-rows-1 gap-4"}>
                             <div className="flex justify-center pt-4 h-fit">
@@ -71,50 +110,23 @@ const CalendarComponent: NextPage = ({locations}) => {
 
                         <div className={"h-fit px-4"}>
                             <p className={"font-semibold text-center pt-2"}>{date.toLocaleString('default', {month: 'long'})} {date.getDate()}, {date.getFullYear()}</p>
-                            {ListOfAvailableTimes(getSelectedDate(date))}
+                            {ListOfAvailableTimes(getSelectedDate(date), times)}
                         </div>
                     </div>
+
+                    <UserInfoFormView />
                 </div>
 
-                <div className={"mt-20 bg-red-200 py-4 mb-12"}>
-                    <p className={"pb-4 text-center font-semibold"}>List of Locations</p>
-                    {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
-                        <p key={location.id} className={"text-center pb-1"}>
-                            {location.name}
-                        </p>
-                    ))}
-
-                    <div className={"pt-16 text-center"}>
-                        <button onClick={handleClick} className={"bg-white rounded-lg px-6 py-2 text-center"}>
-                            FETCH DATA
-                        </button>
-
-                        <p className={"pt-4"}>Vehicle Data</p>
+                <div className={"mt-4 py-4 mb-12"}>
+                    <div className={"mx-10"}>
+                        <div className={"bg-blue-200 rounded-2xl py-4 h-fit"}>
+                            <div className={"text-center"}>
+                                <button onClick={fetchVehicleAvailabilityData} className={"bg-white rounded-lg px-8 py-2 text-center hover:bg-gray-50"}>
+                                    FETCH TIMES
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <p className={"pt-4 text-center"}>
-                        {vehicles.map((vehicle: {
-                            id: number;
-                            vehicle_availability_relationship_array: {
-                                date: string; t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
-                            }[];
-                        }) => (
-                            <>
-                                <p>
-                                    {vehicle.id}
-                                </p>
-
-                                {vehicle.vehicle_availability_relationship_array.map((value: {
-                                    date: string; t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
-                                }) => (
-                                    <>
-                                        <p>
-                                            {value.date}
-                                        </p>
-                                    </>
-                                ))}
-                            </>
-                        ))}
-                    </p>
                 </div>
             </main>
         </>
@@ -156,65 +168,7 @@ function getSelectedDate(selectedDate: Date) {
     return `${monthNum}/${dateNum}/${selectedDate.getFullYear()}`
 }
 
-function ListOfAvailableTimes(selectedDate: string) {
-    const availability = [
-        {
-            "date": "09/19/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM"]
-        },
-        {
-            "date": "09/20/2022",
-            "times": ["10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/21/2022",
-            "times": []
-        },
-        {
-            "date": "09/22/2022",
-            "times": ["9:00 AM", "10:00 AM"]
-        },
-        {
-            "date": "09/23/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/24/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/25/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/26/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/27/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/28/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/29/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "09/30/2022",
-            "times": ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "10/01/2022",
-            "times": ["10:00 AM", "1:00 PM", "2:00 PM", "4:00 PM", "5:00 PM"]
-        },
-        {
-            "date": "10/02/2022",
-            "times": ["9:00 AM", "4:00 PM", "5:00 PM"]
-        }
-    ]
+function ListOfAvailableTimes(selectedDate: string, availableTimes: string[]) {
     const [selectedTime, setSelectedTime] = useState() // Leave empty so no cell is selected by default
 
     return (
@@ -224,27 +178,20 @@ function ListOfAvailableTimes(selectedDate: string) {
                 <RadioGroup value={selectedTime} onChange={setSelectedTime} name={"selectedTime"} id={"selectedTime"}>
                     <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4 pb-6">
                         {/* LOOPS THROUGH AVAILABILITY AND MAPS THEM TO THE CALENDAR VIEW */}
-                        {availability.map((date) => (
-                            date.date == selectedDate ?
-                                date.times.length == 0 ?
-                                    <div key={1} className={"bg-gray-100 rounded-lg py-4 px-6 w-full flex justify-center mb-4 sm:col-span-3"}>
-                                        <h1>No availability</h1>
-                                    </div>
-                                    :
-                                    date.times.map((time: string) => (
-                                        <RadioGroup.Option
-                                            key={time}
-                                            value={time}
-                                            className={({ checked, active }) =>
-                                                classNames(
-                                                    checked ? 'border-transparent' : 'border-gray-300',
-                                                    active ? 'border-blue-500 ring-2 ring-blue-500' : '',
-                                                    'relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:bg-gray-50'
-                                                )
-                                            }
-                                        >
-                                            {({ checked, active }) => (
-                                                <>
+                        {availableTimes.map((time: string) => (
+                        <RadioGroup.Option
+                            key={time}
+                            value={time}
+                            className={({ checked, active }) =>
+                                classNames(
+                                    checked ? 'border-transparent' : 'border-gray-300',
+                                    active ? 'border-blue-500 ring-2 ring-blue-500' : '',
+                                    'relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:bg-gray-50'
+                                )
+                            }
+                        >
+                            {({ checked, active }) => (
+                                <>
                                             <span className="flex flex-1">
                                               <span className="flex flex-col">
                                                 <RadioGroup.Label as="span" className="block text-sm font-medium text-gray-900">
@@ -252,34 +199,28 @@ function ListOfAvailableTimes(selectedDate: string) {
                                                 </RadioGroup.Label>
                                               </span>
                                             </span>
-                                                    <CheckCircleIcon
-                                                        className={classNames(!checked ? 'invisible' : '', 'h-5 w-5 text-blue-600')}
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span
-                                                        className={classNames(
-                                                            active ? 'border' : 'border-2',
-                                                            checked ? 'border-blue-500' : 'border-transparent',
-                                                            'pointer-events-none absolute -inset-px rounded-lg'
-                                                        )}
-                                                        aria-hidden="true"
-                                                    />
-                                                </>
-                                            )}
-                                        </RadioGroup.Option>
-                                    ))
-                                :
-                                <></>
+                                    <CheckCircleIcon
+                                        className={classNames(!checked ? 'invisible' : '', 'h-5 w-5 text-blue-600')}
+                                        aria-hidden="true"
+                                    />
+                                    <span
+                                        className={classNames(
+                                            active ? 'border' : 'border-2',
+                                            checked ? 'border-blue-500' : 'border-transparent',
+                                            'pointer-events-none absolute -inset-px rounded-lg'
+                                        )}
+                                        aria-hidden="true"
+                                    />
+                                </>
+                            )}
+                        </RadioGroup.Option>
                         ))}
                     </div>
 
                     {/* HIDES THE CONTINUE BUTTON IF NOT TIMES ARE AVAILABLE */}
-                    {availability.map((date) => (
-                        date.date == selectedDate ? date.times.length > 0 ?
-                            <button className={"bg-blue-600 rounded-lg py-4 px-6 w-full flex justify-center text-white hover:bg-blue-700"} type={"submit"} key={1}>
-                                <h1>Continue</h1>
-                            </button> : <></> : <></>
-                    ))}
+                    <button className={"bg-blue-600 rounded-lg py-3 px-6 w-full flex justify-center text-white hover:bg-blue-700"} type={"submit"} key={1}>
+                        <h1>Continue</h1>
+                    </button>
 
                 </RadioGroup>
             </form>
@@ -291,3 +232,190 @@ const submitForm = async (event: any) => {
     event.preventDefault();
     alert(`Test Drive on ${event.target.selectedDate.value} at ${event.target.selectedTime.value} confirmed!`);
 };
+
+
+interface locProps {
+    locations: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }[];
+    hidden: Boolean;
+}
+
+interface calProps {
+    date: Date;
+    times: string[];
+}
+
+class LocationsView extends Component<locProps, any> {
+    render() {
+        const locations = this.props.locations
+        const hidden = this.props.hidden
+
+        return (
+            <>
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${hidden ? "hidden" : ""}`}>
+                    <div className={"grid grid-rows-1 gap-4"}>
+                        <div className="flex justify-center pt-4 h-fit">
+
+                        </div>
+                    </div>
+
+                    <div className={"h-fit px-4"}>
+                        <p className={"font-semibold text-center pt-2"}>Test Drive Locations</p>
+                        <div className={"mt-4 grid grid-cols-1 gap-y-4 sm:gap-x-4 pb-6"}>
+                            {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
+                                <button className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 md:py-4 md:px-10 md:text-sm">
+                                    {location.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </>
+        )
+    }
+}
+
+class CalendarView extends Component<calProps, any> {
+    render() {
+        const date = this.props.date
+        const times = this.props.times
+
+        return (
+            <>
+
+            </>
+        )
+    }
+}
+
+class UserInfoFormView extends Component<any, any> {
+    render() {
+        return (
+            <>
+                <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
+                    <div className={"container px-4"}>
+                        <p className={"font-semibold text-center pt-2 pb-6"}>Test Drive Info</p>
+                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                            <div>
+                                <p className={"font-semibold"}>Location</p>
+                            </div>
+
+                            <div>
+                                <p className={"text-sm"}>Scottsdale Fashion Square</p>
+                            </div>
+                        </div>
+                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                            <div>
+                                <p className={"font-semibold"}>Address</p>
+                            </div>
+
+                            <div>
+                                <a href={""}>
+                                    <p className={"text-sm"}>7014 E Camelback Rd</p>
+                                    <p className={"text-sm"}>Scottsdale, AZ 85251</p>
+                                </a>
+                            </div>
+                        </div>
+                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                            <div>
+                                <p className={"font-semibold"}>Phone Number</p>
+                            </div>
+
+                            <div>
+                                <p className={"text-sm"}>+1 (480) 392-3695</p>
+                            </div>
+                        </div>
+                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                            <div>
+                                <p className={"font-semibold"}>Notes</p>
+                            </div>
+
+                            <div>
+                                <p className={"text-sm"}>In the food court next to the Starbucks and Boba Tea.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={"container h-fit px-4"}>
+                        <p className={"font-semibold text-center pt-2 pb-4"}>Enter Your Details</p>
+
+                        <div className={"pb-6"}>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                Full Name
+                            </label>
+                            <div className="relative mt-1 rounded-md shadow-sm">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    id="name"
+                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="Full Name"
+                                />
+                            </div>
+                        </div>
+
+                        <div className={"pb-6"}>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                Email Address
+                            </label>
+                            <div className="relative mt-1 rounded-md shadow-sm">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <EnvelopeIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="Email Address"
+                                />
+                            </div>
+                        </div>
+
+                        <div className={"pb-6"}>
+                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                                Phone Number
+                            </label>
+                            <div className="relative mt-1 rounded-md shadow-sm">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <PhoneIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    id="phone"
+                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="Phone Number"
+                                />
+                            </div>
+                        </div>
+
+                        <div className={"pb-6"}>
+                            <label htmlFor="zip" className="block text-sm font-medium text-gray-700">
+                                Zip Code
+                            </label>
+                            <div className="relative mt-1 rounded-md shadow-sm">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <MapPinIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="zip"
+                                    id="zip"
+                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="Zip Code"
+                                />
+                            </div>
+                        </div>
+
+                        <button className={"bg-blue-600 rounded-lg py-3 px-6 w-full flex justify-center text-white hover:bg-blue-700"} type={"submit"} key={1}>
+                            <h1>Confirm Test Drive</h1>
+                        </button>
+                    </div>
+                </div>
+            </>
+        )
+    }
+}
