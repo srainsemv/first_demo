@@ -9,8 +9,31 @@ import {gql} from "@apollo/client";
 import client from '../lib/apollo-client';
 
 // @ts-ignore
-const CalendarComponent: NextPage = ({vehicles}) => {
+const CalendarComponent: NextPage = ({locations}) => {
     const [date, setDate] = useState(new Date());
+    const [vehicles, setVehicles] = useState([])
+
+    const fetchVehicleData = async () => {
+        const {data} = await client.query({
+            query: gql`
+            query GetLocations {
+              testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
+                id
+                vin
+                color
+                gen
+              }
+            }
+          `,
+        });
+
+        return setVehicles(data.testdrive_vehicles)
+    }
+
+    const handleClick = (event: { preventDefault: () => void; }) => {
+        event.preventDefault()
+        fetchVehicleData().then((data) => {})
+    }
 
     return (
         <>
@@ -38,13 +61,28 @@ const CalendarComponent: NextPage = ({vehicles}) => {
                     </div>
                 </div>
 
-                <div className={"mt-20 bg-red-200 py-4"}>
-                    <p className={"pb-4 text-center font-semibold"}>List of Cars</p>
-                    {vehicles.map((vehicle: { id: number; gen: string; color: string; vin: string; vehicle_locations: {id: number; name: string; phone: string;} }) => (
-                        <p key={vehicle.id} className={"text-center pb-1"}>
-                            {vehicle.vin} - {vehicle.color} - {vehicle.vehicle_locations.name}
+                <div className={"mt-20 bg-red-200 py-4 mb-12"}>
+                    <p className={"pb-4 text-center font-semibold"}>List of Locations</p>
+                    {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
+                        <p key={location.id} className={"text-center pb-1"}>
+                            {location.name}
                         </p>
                     ))}
+
+                    <button onClick={handleClick} className={"mt-10 bg-white rounded-lg px-6 py-2 text-center"}>FETCH
+                        DATA
+                    </button>
+
+                    <p className={"mt-10 text-center"}>
+                        Vehicle Data
+                    </p>
+                    <p className={"mt-4 text-center"}>
+                        {vehicles.map((vehicle: {id: number; vin: string; color: string; gen: string;}) => (
+                            <p>
+                                {vehicle.vin} - {vehicle.gen}
+                            </p>
+                        ))}
+                    </p>
                 </div>
             </main>
         </>
@@ -53,29 +91,28 @@ const CalendarComponent: NextPage = ({vehicles}) => {
 
 export default CalendarComponent
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const { data } = await client.query({
         query: gql`
-        query GetVehiclesAtLocation {
-            emv_test_drive_vehicles {
-                id
-                gen
-                color
-                vin
-                location
-                vehicle_locations {
-                    id
-                    name
-                    phone
-                }
-            }
+        query GetLocations {
+          testdrive_locations {
+            id
+            name
+            address1
+            city
+            state
+            zip
+            country
+          }
         }
       `,
     });
 
+    console.log(typeof data)
+
     return {
         props: {
-            vehicles: data.emv_test_drive_vehicles,
+            locations: data.testdrive_locations,
         },
     };
 }
