@@ -16,16 +16,31 @@ const CalendarComponent: NextPage = ({locations}) => {
     const fetchVehicleData = async () => {
         const {data} = await client.query({
             query: gql`
-            query GetLocations {
+            query GetLocationAvailability {
               testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
                 id
-                vin
-                color
-                gen
+                vehicle_availability_relationship_array {
+                  date
+                  t8
+                  t9
+                  t10
+                  t11
+                  t12
+                  t13
+                  t14
+                  t15
+                  t16
+                  t17
+                  t18
+                  t19
+                  t20
+                }
               }
             }
           `,
         });
+
+        console.log(data.testdrive_vehicles)
 
         return setVehicles(data.testdrive_vehicles)
     }
@@ -69,18 +84,35 @@ const CalendarComponent: NextPage = ({locations}) => {
                         </p>
                     ))}
 
-                    <button onClick={handleClick} className={"mt-10 bg-white rounded-lg px-6 py-2 text-center"}>FETCH
-                        DATA
-                    </button>
+                    <div className={"pt-16 text-center"}>
+                        <button onClick={handleClick} className={"bg-white rounded-lg px-6 py-2 text-center"}>
+                            FETCH DATA
+                        </button>
 
-                    <p className={"mt-10 text-center"}>
-                        Vehicle Data
-                    </p>
-                    <p className={"mt-4 text-center"}>
-                        {vehicles.map((vehicle: {id: number; vin: string; color: string; gen: string;}) => (
-                            <p>
-                                {vehicle.vin} - {vehicle.gen}
-                            </p>
+                        <p className={"pt-4"}>Vehicle Data</p>
+                    </div>
+                    <p className={"pt-4 text-center"}>
+                        {vehicles.map((vehicle: {
+                            id: number;
+                            vehicle_availability_relationship_array: {
+                                date: string; t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
+                            }[];
+                        }) => (
+                            <>
+                                <p>
+                                    {vehicle.id}
+                                </p>
+
+                                {vehicle.vehicle_availability_relationship_array.map((value: {
+                                    date: string; t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
+                                }) => (
+                                    <>
+                                        <p>
+                                            {value.date}
+                                        </p>
+                                    </>
+                                ))}
+                            </>
                         ))}
                     </p>
                 </div>
