@@ -19,7 +19,7 @@ const CalendarComponent: NextPage = ({locations}) => {
             query GetLocationAvailability {
               testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
                 id
-                vehicle_availability_relationship_array {
+                vehicle_availability_relationship_array(where: {date: {_eq: "09/22/2022"}}) {
                   date
                   t8
                   t9
@@ -223,28 +223,28 @@ function ListOfAvailableTimes(selectedDate: string) {
                 <input name={"selectedDate"} id={"selectedDate"} value={selectedDate} hidden readOnly={true} />
                 <RadioGroup value={selectedTime} onChange={setSelectedTime} name={"selectedTime"} id={"selectedTime"}>
                     <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4 pb-6">
-                    {/* LOOPS THROUGH AVAILABILITY AND MAPS THEM TO THE CALENDAR VIEW */}
-                    {availability.map((date) => (
-                        date.date == selectedDate ?
-                            date.times.length == 0 ?
-                                <div key={1} className={"bg-gray-100 rounded-lg py-4 px-6 w-full flex justify-center mb-4 sm:col-span-3"}>
-                                    <h1>No availability</h1>
-                                </div>
-                                :
-                            date.times.map((time: string) => (
-                                <RadioGroup.Option
-                                    key={time}
-                                    value={time}
-                                    className={({ checked, active }) =>
-                                        classNames(
-                                            checked ? 'border-transparent' : 'border-gray-300',
-                                            active ? 'border-blue-500 ring-2 ring-blue-500' : '',
-                                            'relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:bg-gray-50'
-                                        )
-                                    }
-                                >
-                                    {({ checked, active }) => (
-                                        <>
+                        {/* LOOPS THROUGH AVAILABILITY AND MAPS THEM TO THE CALENDAR VIEW */}
+                        {availability.map((date) => (
+                            date.date == selectedDate ?
+                                date.times.length == 0 ?
+                                    <div key={1} className={"bg-gray-100 rounded-lg py-4 px-6 w-full flex justify-center mb-4 sm:col-span-3"}>
+                                        <h1>No availability</h1>
+                                    </div>
+                                    :
+                                    date.times.map((time: string) => (
+                                        <RadioGroup.Option
+                                            key={time}
+                                            value={time}
+                                            className={({ checked, active }) =>
+                                                classNames(
+                                                    checked ? 'border-transparent' : 'border-gray-300',
+                                                    active ? 'border-blue-500 ring-2 ring-blue-500' : '',
+                                                    'relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:bg-gray-50'
+                                                )
+                                            }
+                                        >
+                                            {({ checked, active }) => (
+                                                <>
                                             <span className="flex flex-1">
                                               <span className="flex flex-col">
                                                 <RadioGroup.Label as="span" className="block text-sm font-medium text-gray-900">
@@ -252,25 +252,25 @@ function ListOfAvailableTimes(selectedDate: string) {
                                                 </RadioGroup.Label>
                                               </span>
                                             </span>
-                                            <CheckCircleIcon
-                                                className={classNames(!checked ? 'invisible' : '', 'h-5 w-5 text-blue-600')}
-                                                aria-hidden="true"
-                                            />
-                                            <span
-                                                className={classNames(
-                                                    active ? 'border' : 'border-2',
-                                                    checked ? 'border-blue-500' : 'border-transparent',
-                                                    'pointer-events-none absolute -inset-px rounded-lg'
-                                                )}
-                                                aria-hidden="true"
-                                            />
-                                        </>
-                                    )}
-                                </RadioGroup.Option>
-                            ))
-                            :
-                            <></>
-                    ))}
+                                                    <CheckCircleIcon
+                                                        className={classNames(!checked ? 'invisible' : '', 'h-5 w-5 text-blue-600')}
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span
+                                                        className={classNames(
+                                                            active ? 'border' : 'border-2',
+                                                            checked ? 'border-blue-500' : 'border-transparent',
+                                                            'pointer-events-none absolute -inset-px rounded-lg'
+                                                        )}
+                                                        aria-hidden="true"
+                                                    />
+                                                </>
+                                            )}
+                                        </RadioGroup.Option>
+                                    ))
+                                :
+                                <></>
+                        ))}
                     </div>
 
                     {/* HIDES THE CONTINUE BUTTON IF NOT TIMES ARE AVAILABLE */}

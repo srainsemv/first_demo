@@ -92,7 +92,7 @@
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus { /* For hovering over a date */
     background-color: #e6e6e6;
-    border-radius: 0; /* Set to 25px to get circle dots */
+    border-radius: 25px; /* Set to 25px to get circle dots */
 }
 .react-calendar__tile--now { /* For default active (today's date) on load */
     background: lightgray;
