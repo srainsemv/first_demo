@@ -254,6 +254,7 @@ class LocationsView extends Component<locProps, any> {
                             <div className={"mt-4 grid grid-cols-1 gap-y-4 sm:gap-x-4 pb-6"}>
                                 {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
                                     <button
+                                        key={location.id}
                                         className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 md:py-4 md:px-10 md:text-sm"
                                     >
                                         {location.name}
