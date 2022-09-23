@@ -21,7 +21,7 @@ const CalendarComponent: NextPage = ({locations}) => {
                 query: gql`
                 query GetLocationAvailability {
                   testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
-                    vehicle_availability_relationship_array(where: {date: {_eq: "09/22/2022"}}) {
+                    vehicle_availability_relationship_array(where: {date: {_eq: "09/23/2022"}}) {
                       t8
                       t9
                       t10
@@ -96,26 +96,9 @@ const CalendarComponent: NextPage = ({locations}) => {
             </Head>
 
             <main>
-                <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"}>
-                    <LocationsView locations={locations} hidden={false} />
-
-                    <div className={"grid grid-cols-1 md:grid-cols-2 gap-6"}>
-                        <div className={"grid grid-rows-1 gap-4"}>
-                            <div className="flex justify-center pt-4 h-fit">
-                                <Calendar onChange={setDate} value={date} className={"rounded-lg"} calendarType={"US"}
-                                          minDate={new Date()}
-                                          maxDate={new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())}/>
-                            </div>
-                        </div>
-
-                        <div className={"h-fit px-4"}>
-                            <p className={"font-semibold text-center pt-2"}>{date.toLocaleString('default', {month: 'long'})} {date.getDate()}, {date.getFullYear()}</p>
-                            {ListOfAvailableTimes(getSelectedDate(date), times)}
-                        </div>
-                    </div>
-
-                    <UserInfoFormView />
-                </div>
+                <LocationsView locations={locations} hidden={false} />
+                {CalendarView(date, times)}
+                <UserInfoFormView />
 
                 <div className={"mt-4 py-4 mb-12"}>
                     <div className={"mx-10"}>
@@ -239,11 +222,6 @@ interface locProps {
     hidden: Boolean;
 }
 
-interface calProps {
-    date: Date;
-    times: string[];
-}
-
 class LocationsView extends Component<locProps, any> {
     render() {
         const locations = this.props.locations
@@ -251,151 +229,9 @@ class LocationsView extends Component<locProps, any> {
 
         return (
             <>
-                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${hidden ? "hidden" : ""}`}>
-                    <div className={"grid grid-rows-1 gap-4"}>
-                        <div className="flex justify-center pt-4 h-fit">
-
-                        </div>
-                    </div>
-
-                    <div className={"h-fit px-4"}>
-                        <p className={"font-semibold text-center pt-2"}>Test Drive Locations</p>
-                        <div className={"mt-4 grid grid-cols-1 gap-y-4 sm:gap-x-4 pb-6"}>
-                            {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
-                                <button className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 md:py-4 md:px-10 md:text-sm">
-                                    {location.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </>
-        )
-    }
-}
-
-class CalendarView extends Component<calProps, any> {
-    render() {
-        const date = this.props.date
-        const times = this.props.times
-
-        return (
-            <>
-
-            </>
-        )
-    }
-}
-
-class UserInfoFormView extends Component<any, any> {
-    render() {
-        return (
-            <>
-                <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
-                    <div className={"container px-4"}>
-                        <p className={"font-semibold text-center pt-2 pb-6"}>Test Drive Info</p>
-                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
-                            <div>
-                                <p className={"font-semibold"}>Location</p>
-                            </div>
-
-                            <div>
-                                <p className={"text-sm"}>Scottsdale Fashion Square</p>
-                            </div>
-                        </div>
-                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
-                            <div>
-                                <p className={"font-semibold"}>Address</p>
-                            </div>
-
-                            <div>
-                                <a href={""}>
-                                    <p className={"text-sm"}>7014 E Camelback Rd</p>
-                                    <p className={"text-sm"}>Scottsdale, AZ 85251</p>
-                                </a>
-                            </div>
-                        </div>
-                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
-                            <div>
-                                <p className={"font-semibold"}>Phone Number</p>
-                            </div>
-
-                            <div>
-                                <p className={"text-sm"}>+1 (480) 392-3695</p>
-                            </div>
-                        </div>
-                        <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
-                            <div>
-                                <p className={"font-semibold"}>Notes</p>
-                            </div>
-
-                            <div>
-                                <p className={"text-sm"}>In the food court next to the Starbucks and Boba Tea.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className={"container h-fit px-4"}>
-                        <p className={"font-semibold text-center pt-2 pb-4"}>Enter Your Details</p>
-
-                        <div className={"pb-6"}>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                Full Name
-                            </label>
-                            <div className="relative mt-1 rounded-md shadow-sm">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                </div>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Full Name"
-                                />
-                            </div>
-                        </div>
-
-                        <div className={"pb-6"}>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Email Address
-                            </label>
-                            <div className="relative mt-1 rounded-md shadow-sm">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <EnvelopeIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                </div>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Email Address"
-                                />
-                            </div>
-                        </div>
-
-                        <div className={"pb-6"}>
-                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                                Phone Number
-                            </label>
-                            <div className="relative mt-1 rounded-md shadow-sm">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <PhoneIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                </div>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    id="phone"
-                                    className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Phone Number"
-                                />
-                            </div>
-                        </div>
-
-                        <div className={"pb-6"}>
-                            <label htmlFor="zip" className="block text-sm font-medium text-gray-700">
-                                Zip Code
-                            </label>
+                <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"}>
+                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${hidden ? "hidden" : ""}`}>
+                        <div className={"px-4 pt-2"}>
                             <div className="relative mt-1 rounded-md shadow-sm">
                                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <MapPinIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -405,14 +241,203 @@ class UserInfoFormView extends Component<any, any> {
                                     name="zip"
                                     id="zip"
                                     className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                    placeholder="Zip Code"
+                                    placeholder="Enter Zip Code"
                                 />
+                            </div>
+                            <div className="flex justify-center h-fit pt-4">
+                                <img src={"/map.png"} className={"rounded-lg"} />
                             </div>
                         </div>
 
-                        <button className={"bg-blue-600 rounded-lg py-3 px-6 w-full flex justify-center text-white hover:bg-blue-700"} type={"submit"} key={1}>
-                            <h1>Confirm Test Drive</h1>
-                        </button>
+                        <div className={"h-fit px-4"}>
+                            <p className={"font-semibold text-center pt-2"}>Test Drive Locations</p>
+                            <div className={"mt-4 grid grid-cols-1 gap-y-4 sm:gap-x-4 pb-6"}>
+                                {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
+                                    <button
+                                        className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 md:py-4 md:px-10 md:text-sm"
+                                    >
+                                        {location.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </>
+        )
+    }
+}
+
+function CalendarView(date: Date, times: string[]) {
+     return (
+        <>
+            <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"}>
+                <div className={"grid grid-cols-1 md:grid-cols-2 gap-6"}>
+                    <div className={"grid grid-rows-1 gap-4"}>
+                        <div className="flex justify-center pt-4 h-fit">
+                            <Calendar onChange={() => {}} value={date} className={"rounded-lg"} calendarType={"US"}
+                                      minDate={new Date()}
+                                      maxDate={new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())}/>
+                        </div>
+                    </div>
+
+                    <div className={"h-fit px-4"}>
+                        <p className={"font-semibold text-center pt-2"}>{date.toLocaleString('default', {month: 'long'})} {date.getDate()}, {date.getFullYear()}</p>
+                        {ListOfAvailableTimes(getSelectedDate(date), times)}
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+class UserInfoFormView extends Component<any, any> {
+    render() {
+        return (
+            <>
+                <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"}>
+                    <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
+                        <div className={"container px-4"}>
+                            <p className={"font-semibold text-center pt-2 pb-6"}>Test Drive Info</p>
+                            <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                                <div>
+                                    <p className={"font-semibold"}>Date</p>
+                                </div>
+
+                                <div>
+                                    <p className={"text-sm"}>September 23, 2022</p>
+                                </div>
+                            </div>
+                            <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                                <div>
+                                    <p className={"font-semibold"}>Time</p>
+                                </div>
+
+                                <div>
+                                    <p className={"text-sm"}>2:00 PM - 3:00 PM PST</p>
+                                </div>
+                            </div>
+                            <div className={"py-4"}></div>
+                            <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                                <div>
+                                    <p className={"font-semibold"}>Location</p>
+                                </div>
+
+                                <div>
+                                    <p className={"text-sm"}>Scottsdale Fashion Square</p>
+                                </div>
+                            </div>
+                            <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                                <div>
+                                    <p className={"font-semibold"}>Address</p>
+                                </div>
+
+                                <div>
+                                    <a href={""}>
+                                        <p className={"text-sm"}>7014 E Camelback Rd</p>
+                                        <p className={"text-sm"}>Scottsdale, AZ 85251</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                                <div>
+                                    <p className={"font-semibold"}>Phone Number</p>
+                                </div>
+
+                                <div>
+                                    <p className={"text-sm"}>+1 (480) 392-3695</p>
+                                </div>
+                            </div>
+                            <div className={"grid grid-cols-1 md: grid-cols-2 gap-2 py-2"}>
+                                <div>
+                                    <p className={"font-semibold"}>Notes</p>
+                                </div>
+
+                                <div>
+                                    <p className={"text-sm"}>In the food court next to the Starbucks and Boba Tea.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={"container h-fit px-4"}>
+                            <p className={"font-semibold text-center pt-2 pb-4"}>Enter Your Details</p>
+
+                            <div className={"pb-6"}>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                    Full Name
+                                </label>
+                                <div className="relative mt-1 rounded-md shadow-sm">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Full Name"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={"pb-6"}>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                    Email Address
+                                </label>
+                                <div className="relative mt-1 rounded-md shadow-sm">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <EnvelopeIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Email Address"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={"pb-6"}>
+                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                                    Phone Number
+                                </label>
+                                <div className="relative mt-1 rounded-md shadow-sm">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <PhoneIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        id="phone"
+                                        className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Phone Number"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={"pb-6"}>
+                                <label htmlFor="zip" className="block text-sm font-medium text-gray-700">
+                                    Zip Code
+                                </label>
+                                <div className="relative mt-1 rounded-md shadow-sm">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <MapPinIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="zip"
+                                        id="zip"
+                                        className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Zip Code"
+                                    />
+                                </div>
+                            </div>
+
+                            <button className={"bg-blue-600 rounded-lg py-3 px-6 w-full flex justify-center text-white hover:bg-blue-700"} type={"submit"} key={1}>
+                                <h1>Confirm Test Drive</h1>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </>

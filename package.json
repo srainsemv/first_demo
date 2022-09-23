@@ -24,6 +24,7 @@
     "express": "^4.18.1",
     "faker": "^5.5.3",
     "framer-motion": "^7.3.2",
+    "google-map-react": "^2.2.0",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.1",
     "next": "12.2.5",
