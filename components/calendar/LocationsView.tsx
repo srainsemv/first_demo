@@ -3,7 +3,7 @@ import {MapPinIcon} from "@heroicons/react/24/outline";
 // @ts-ignore
 import {setLocationState} from "../../slices/progressSlice";
 
-export default function LocationsView(locations: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }[]) {
+export default function LocationsView(locations: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; location_details_relationship: {phone: string; notes: string;} }[]) {
     const selectLocationOpen = useSelector((state: any) => state.progress.selectLocationOpen)
     const dispatch = useDispatch()
 
@@ -32,11 +32,11 @@ export default function LocationsView(locations: { id: number; name: string; add
                     <div className={"h-fit px-4"}>
                         <p className={"font-semibold text-center pt-2"}>Test Drive Locations</p>
                         <div className={"mt-4 grid grid-cols-1 gap-y-4 sm:gap-x-4 pb-6"}>
-                            {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
+                            {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; location_details_relationship: {phone: string; notes: string;} }) => (
                                 <button
                                     key={location.id}
                                     onClick={
-                                        () => dispatch(setLocationState([{"id": location.id, "name":location.name}]))
+                                        () => dispatch(setLocationState([{"id": location.id, "name":location.name, "address1":location.address1, "city":location.city, "state":location.state, "zip":location.zip, "phone":location.location_details_relationship.phone, "notes":location.location_details_relationship.notes}]))
                                     }
                                     className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 md:py-4 md:px-10 md:text-sm"
                                 >

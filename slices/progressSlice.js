@@ -12,8 +12,10 @@ const progressSlice = createSlice({
         selectLocationOpen: true,
         selectDayTimeOpen: false,
         tdUserFormOpen: false,
-        selectedLocation: {"id": 2, "name":""},
+        selectedLocation: {"id":0, "name":""},
         selectedDate: new Date(),
+        selectedDateString: "",
+        selectedTime: "",
     },
     reducers: { // 2. Create a reducer function that can change the state
         toggleNewUserModal: (state) => {
@@ -46,9 +48,17 @@ const progressSlice = createSlice({
         },
 
         setSelectedDate(state, action) {
-            console.log(action.payload)
             state.selectedDate = action.payload;
-        }
+        },
+
+        setSelectedTate(state, action) {
+            state.selectedTime = action.payload;
+        },
+
+        setSelectedDateTime(state, action) {
+            state.selectedDateString = action.payload.date;
+            state.selectedTime = action.payload.time;
+        },
     },
 
     // Special reducer for hydrating the state. Special case for next-redux-wrapper
@@ -68,12 +78,13 @@ export const { // 3. Now export the function created in step 2
     toggleDeactivateModal,
 
     // Test Drive Components
-    toggleSelectLocation,
     toggleTDUserForm,
 } = progressSlice.actions
 
 export const { setLocationState } = progressSlice.actions;
 export const { setSelectedDate } = progressSlice.actions;
+export const { setSelectedTate } = progressSlice.actions;
+export const { setSelectedDateTime } = progressSlice.actions;
 
 // Step 4 is on (slice/index.js)
 

@@ -5,13 +5,11 @@ import {RadioGroup} from "@headlessui/react";
 import classNames from "classnames";
 import {CheckCircleIcon} from "@heroicons/react/20/solid";
 // @ts-ignore
-import {setSelectedDate, toggleTDUserForm} from "../../slices/progressSlice";
+import {setLocationState, setSelectedDate, toggleTDUserForm, setSelectedTate, setSelectedDateTime} from "../../slices/progressSlice";
 import client from "../../lib/apollo-client";
 import {gql} from "@apollo/client";
-import {returnStatement} from "@babel/types";
 
 export default function CalendarView(initialTimes: string[]) {
-
     const selectDayTimeOpen = useSelector((state: any) => state.progress.selectDayTimeOpen)
     const selectedLocation = useSelector((state: any) => state.progress.selectedLocation)
     const [date, setDate] = useState(new Date());
@@ -130,13 +128,13 @@ function ListOfAvailableTimes(selectedDate: string, availableTimes: string[]) {
 
     return (
         <>
-            <input name={"selectedDate"} id={"selectedDate"} value={selectedDate} hidden readOnly={true} />
             <RadioGroup value={selectedTime} onChange={setSelectedTime} name={"selectedTime"} id={"selectedTime"}>
                 <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4 pb-6">
                     {/* LOOPS THROUGH AVAILABILITY AND MAPS THEM TO THE CALENDAR VIEW */}
                     {availableTimes.map((time: string) => (
                         <RadioGroup.Option
                             key={time}
+                            onClick={() => dispatch(setSelectedDateTime({"date": selectedDate, "time": time}))}
                             value={time}
                             className={({ checked, active }) =>
                                 classNames(
@@ -178,11 +176,11 @@ function ListOfAvailableTimes(selectedDate: string, availableTimes: string[]) {
                     (
                         <button
                             key={1}
-                            className={"bg-blue-600 rounded-lg py-3 px-6 w-full flex justify-center text-white hover:bg-blue-700"}
-                            onClick={submitForm}
-                            //onClick={() => dispatch(toggleTDUserForm())}
+                            className={`${selectedTime == undefined ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-700"} rounded-lg py-3 px-6 w-full flex justify-center text-white`}
+                            disabled={selectedTime == undefined}
+                            onClick={() => dispatch(toggleTDUserForm())}
                         >
-                            <h1>Continue</h1>
+                            {selectedTime == undefined ? (<h1>Select a Time</h1>) : <h1>Continue</h1>}
                         </button>
                     ) :
                     (
@@ -202,9 +200,3 @@ function getSelectedDate(selectedDate: Date) {
 
     return `${monthNum}/${dateNum}/${selectedDate.getFullYear()}`
 }
-
-const submitForm = async (event: any) => {
-    event.preventDefault();
-    console.log(event.target)
-    //alert(`Test Drive on ${event.target.selectedDate.value} at ${event.target.selectedTime.value} confirmed!`);
-};

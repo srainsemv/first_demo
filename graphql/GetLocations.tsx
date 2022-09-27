@@ -10,6 +10,10 @@ export const GET_LOCATIONS = gql`
         state
         zip
         country
+        location_details_relationship {
+          phone
+          notes
+        }
       }
     }
 `;

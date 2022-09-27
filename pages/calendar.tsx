@@ -1,7 +1,5 @@
 import {NextPage} from "next";
 import Head from "next/head";
-import {useState} from "react";
-import {gql} from "@apollo/client";
 import client from '../lib/apollo-client';
 import LocationsView from "../components/calendar/LocationsView";
 import CalendarView from "../components/calendar/CalendarView";
