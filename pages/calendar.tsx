@@ -6,85 +6,10 @@ import client from '../lib/apollo-client';
 import LocationsView from "../components/calendar/LocationsView";
 import CalendarView from "../components/calendar/CalendarView";
 import UserFormView from "../components/calendar/UserFormView";
+import {GET_LOCATIONS} from "../graphql/GetLocations";
 
 // @ts-ignore
-const CalendarComponent: NextPage = ({locations}) => {
-    const [date, setDate] = useState(new Date());
-    const [times, setTimes] = useState<string[]>([]);
-
-    const fetchVehicleAvailabilityData = async (event: { preventDefault: () => void; }) => {
-        event.preventDefault()
-        try {
-            const {data} = await client.query({
-                query: gql`
-                query GetLocationAvailability {
-                  testdrive_vehicles(where: {in_service: {_eq: true}, location: {_eq: 1}}) {
-                    vehicle_availability_relationship_array(where: {date: {_eq: "09/23/2022"}}) {
-                      t8
-                      t9
-                      t10
-                      t11
-                      t12
-                      t13
-                      t14
-                      t15
-                      t16
-                      t17
-                      t18
-                      t19
-                      t20
-                    }
-                  }
-                }
-              `,
-            });
-
-            await arrayOfDayAvailability(data.testdrive_vehicles)
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    const arrayOfDayAvailability = async (data: { vehicle_availability_relationship_array: { t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean; }[]; }[]) => {
-        let fullListOfTimes: string[] = []
-
-        data.map((vehicle: {
-            vehicle_availability_relationship_array: {
-                t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
-            }[];
-        }) => (
-            vehicle.vehicle_availability_relationship_array.map(async (value: {
-                t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean;
-            }) => (
-                (
-                    getListOfAvailableTimesForEachVehicle(value).map((timeString) => (
-                        fullListOfTimes.indexOf(timeString) === -1 ? fullListOfTimes.push(timeString) : null
-                    ))
-                )
-            ))
-        ))
-
-       setTimes(fullListOfTimes)
-    }
-
-    const getListOfAvailableTimesForEachVehicle = (data: { t8: boolean; t9: boolean; t10: boolean; t11: boolean; t12: boolean; t13: boolean; t14: boolean; t15: boolean; t16: boolean; t17: boolean; t18: boolean; t19: boolean; t20: boolean; }) => {
-        let tempTimes: string[] = []
-        data.t8 ? tempTimes.push("8:00 AM") : null
-        data.t9 ? tempTimes.push("9:00 AM") : null
-        data.t10 ? tempTimes.push("10:00 AM") : null
-        data.t11 ? tempTimes.push("11:00 AM") : null
-        data.t12 ? tempTimes.push("12:00 PM") : null
-        data.t13 ? tempTimes.push("1:00 PM") : null
-        data.t14 ? tempTimes.push("2:00 PM") : null
-        data.t15 ? tempTimes.push("3:00 PM") : null
-        data.t16 ? tempTimes.push("4:00 PM") : null
-        data.t17 ? tempTimes.push("5:00 PM") : null
-        data.t18 ? tempTimes.push("6:00 PM") : null
-        data.t19 ? tempTimes.push("7:00 PM") : null
-        data.t20 ? tempTimes.push("8:00 PM") : null
-        return tempTimes
-    }
-
+const CalendarComponent: NextPage = ({locations, initialTimes}) => {
     return (
         <>
             <Head>
@@ -95,20 +20,8 @@ const CalendarComponent: NextPage = ({locations}) => {
 
             <main>
                 {LocationsView(locations)}
-                {CalendarView(date, times)}
+                {CalendarView(initialTimes)}
                 {UserFormView()}
-
-                <div className={"mt-4 py-4 mb-12"}>
-                    <div className={"mx-10"}>
-                        <div className={"bg-blue-200 rounded-2xl py-4 h-fit"}>
-                            <div className={"text-center"}>
-                                <button onClick={fetchVehicleAvailabilityData} className={"bg-white rounded-lg px-8 py-2 text-center hover:bg-gray-50"}>
-                                    FETCH TIMES
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </main>
         </>
     )
@@ -118,26 +31,13 @@ export default CalendarComponent
 
 export async function getServerSideProps() {
     const { data } = await client.query({
-        query: gql`
-        query GetLocations {
-          testdrive_locations {
-            id
-            name
-            address1
-            city
-            state
-            zip
-            country
-          }
-        }
-      `,
+        query: GET_LOCATIONS
     });
-
-    console.log(typeof data)
 
     return {
         props: {
             locations: data.testdrive_locations,
+            initialTimes: ["11:00 AM", "2:00 PM"]
         },
     };
 }

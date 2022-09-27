@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
 
 const progressSlice = createSlice({
     name: "progress",
@@ -11,6 +12,8 @@ const progressSlice = createSlice({
         selectLocationOpen: true,
         selectDayTimeOpen: false,
         tdUserFormOpen: false,
+        selectedLocation: {"id": 2, "name":""},
+        selectedDate: new Date(),
     },
     reducers: { // 2. Create a reducer function that can change the state
         toggleNewUserModal: (state) => {
@@ -25,19 +28,37 @@ const progressSlice = createSlice({
 
         // Test Drive Components
         toggleSelectLocation: (state) => {
-            //state.selectLocationOpen = !state.selectLocationOpen
-            state.selectLocationOpen = false
-            state.selectDayTimeOpen = true
+            state.selectLocationOpen = true
+            state.selectDayTimeOpen = false
             state.tdUserFormOpen = false
         },
-        toggleSelectDayTime: (state) => {
+        toggleTDUserForm: (state) => {
             state.selectLocationOpen = false
             state.selectDayTimeOpen = false
             state.tdUserFormOpen = true
         },
-        toggleTDUserForm: (state) => {
-            state.tdUserFormOpen = !state.tdUserFormOpen
+
+        setLocationState(state, action) {
+            state.selectedLocation = action.payload[0]
+            state.selectLocationOpen = false
+            state.selectDayTimeOpen = true
+            state.tdUserFormOpen = false
+        },
+
+        setSelectedDate(state, action) {
+            console.log(action.payload)
+            state.selectedDate = action.payload;
         }
+    },
+
+    // Special reducer for hydrating the state. Special case for next-redux-wrapper
+    extraReducers: {
+        [HYDRATE]: (state, action) => {
+            return {
+                ...state,
+                ...action.payload.auth,
+            };
+        },
     },
 })
 
@@ -48,9 +69,11 @@ export const { // 3. Now export the function created in step 2
 
     // Test Drive Components
     toggleSelectLocation,
-    toggleSelectDayTime,
     toggleTDUserForm,
 } = progressSlice.actions
+
+export const { setLocationState } = progressSlice.actions;
+export const { setSelectedDate } = progressSlice.actions;
 
 // Step 4 is on (slice/index.js)
 

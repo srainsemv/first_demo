@@ -1,7 +1,7 @@
 import {useDispatch, useSelector} from "react-redux";
 import {MapPinIcon} from "@heroicons/react/24/outline";
-import {toggleSelectLocation} from "../../slices/progressSlice";
-import handler from "../../pages/api/hello";
+// @ts-ignore
+import {setLocationState} from "../../slices/progressSlice";
 
 export default function LocationsView(locations: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }[]) {
     const selectLocationOpen = useSelector((state: any) => state.progress.selectLocationOpen)
@@ -35,7 +35,9 @@ export default function LocationsView(locations: { id: number; name: string; add
                             {locations.map((location: { id: number; name: string; address1: string; city: string; state: string; zip: string; country: string; }) => (
                                 <button
                                     key={location.id}
-                                    onClick={() => dispatch(toggleSelectLocation())}
+                                    onClick={
+                                        () => dispatch(setLocationState([{"id": location.id, "name":location.name}]))
+                                    }
                                     className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-8 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 md:py-4 md:px-10 md:text-sm"
                                 >
                                     {location.name}
