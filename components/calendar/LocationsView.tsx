@@ -10,7 +10,7 @@ export default function LocationsView(locations: { id: number; name: string; add
     return (
         <>
             <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"} hidden={!selectLocationOpen}>
-                <div className={"grid grid-cols-1 md:grid-cols-2 gap-6"}>
+                <div className={"grid grid-cols-1 sm:grid-cols-2 gap-6"}>
                     <div className={"px-4 pt-2"}>
                         <div className="relative mt-1 rounded-md shadow-sm">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

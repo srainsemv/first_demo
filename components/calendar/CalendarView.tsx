@@ -102,7 +102,7 @@ export default function CalendarView(initialTimes: string[]) {
     return (
         <>
             <div className={"bg-gray-50 mx-auto max-w-4xl my-6 py-4 rounded-lg"} hidden={!selectDayTimeOpen}>
-                <div className={"grid grid-cols-1 md:grid-cols-2 gap-6"}>
+                <div className={"grid grid-cols-1 sm:grid-cols-2 gap-6"}>
                     <div className={"grid grid-rows-1 gap-4"}>
                         <div className="flex justify-center pt-4 h-fit">
                             <Calendar onChange={setDate} value={date} className={"rounded-lg"} calendarType={"US"}
