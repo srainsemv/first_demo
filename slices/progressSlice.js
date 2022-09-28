@@ -12,6 +12,7 @@ const progressSlice = createSlice({
         selectLocationOpen: true,
         selectDayTimeOpen: false,
         tdUserFormOpen: false,
+        statusPageOpen: false,
         selectedLocation: {"id":0, "name":""},
         selectedDate: new Date(),
         selectedDateString: "",
@@ -29,15 +30,14 @@ const progressSlice = createSlice({
         },
 
         // Test Drive Components
-        toggleSelectLocation: (state) => {
-            state.selectLocationOpen = true
-            state.selectDayTimeOpen = false
-            state.tdUserFormOpen = false
-        },
         toggleTDUserForm: (state) => {
             state.selectLocationOpen = false
             state.selectDayTimeOpen = false
             state.tdUserFormOpen = true
+        },
+        toggleShowStatus: (state) => {
+            state.tdUserFormOpen = false
+            state.statusPageOpen = true
         },
 
         setLocationState(state, action) {
@@ -79,6 +79,7 @@ export const { // 3. Now export the function created in step 2
 
     // Test Drive Components
     toggleTDUserForm,
+    toggleShowStatus
 } = progressSlice.actions
 
 export const { setLocationState } = progressSlice.actions;

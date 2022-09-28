@@ -14,6 +14,7 @@ import ReactPaginate from 'react-paginate';
 // For Charts
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from "react-chartjs-2";
+import StatusView from "../components/calendar/StatusView";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -27,6 +28,8 @@ const Test: NextPage = () => {
             </Head>
 
             <main>
+                {StatusView()}
+
                 <div className={"text-center p-4"}>
                     <NewUserModal />
                     <DeactivateModal />

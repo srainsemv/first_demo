@@ -5,6 +5,7 @@ import LocationsView from "../components/calendar/LocationsView";
 import CalendarView from "../components/calendar/CalendarView";
 import UserFormView from "../components/calendar/UserFormView";
 import {GET_LOCATIONS} from "../graphql/GetLocations";
+import StatusView from "../components/calendar/StatusView";
 
 // @ts-ignore
 const CalendarComponent: NextPage = ({locations, initialTimes}) => {
@@ -20,6 +21,7 @@ const CalendarComponent: NextPage = ({locations, initialTimes}) => {
                 {LocationsView(locations)}
                 {CalendarView(initialTimes)}
                 {UserFormView()}
+                {StatusView()}
             </main>
         </>
     )

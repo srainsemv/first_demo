@@ -66,13 +66,16 @@ const createAvailability = async (event: any) => {
     });
 
     const dates = ["09/28/2022", "09/29/2022", "09/30/2022"]
+    let listOfInstances: string[] = []
 
     dates.map(async (date: string) => {
         await data.testdrive_vehicles.map(async (vehicleInfo: { id: number }) => {
-            console.log(`${date} - ${vehicleInfo.id}`)
-            const {data} = await client.mutate({
-                mutation: CreateAvailability(date, vehicleInfo.id)
-            });
+            const singleInstance = `{date: "${date}", vehicle: ${vehicleInfo.id}, t0: false, t1: false, t2: false, t3: false, t4: false, t5: false, t6: false, t7: false, t8: true, t9: true, t10: true, t11: true, t12: true, t13: true, t14: true, t15: true, t16: true, t17: true, t18: true, t19: false, t20: false, t21: false, t22: false, t23: false}`
+            listOfInstances.push(singleInstance)
         })
     })
+
+    await client.mutate({
+        mutation: CreateAvailability(listOfInstances)
+    });
 }

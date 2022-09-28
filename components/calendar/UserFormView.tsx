@@ -2,12 +2,28 @@ import {useDispatch, useSelector} from "react-redux";
 import {EnvelopeIcon, MapPinIcon, PhoneIcon, UserIcon} from "@heroicons/react/24/outline";
 import client from "../../lib/apollo-client";
 import {ConfirmTestDrive} from "../../graphql/ConfirmTestDrive";
+// @ts-ignore
+import { toggleShowStatus } from "../../slices/progressSlice";
 
 export default function UserFormView() {
+    const dispatch = useDispatch()
     const tdUserFormOpen = useSelector((state: any) => state.progress.tdUserFormOpen)
     const selectedLocation = useSelector((state: any) => state.progress.selectedLocation)
     const selectedDateString = useSelector((state: any) => state.progress.selectedDateString)
     const selectedTime = useSelector((state: any) => state.progress.selectedTime)
+
+    const submitForm = async (event: any) => {
+        event.preventDefault();
+
+        const {data} = await client.mutate({
+            mutation: ConfirmTestDrive(event.target.name.value, event.target.email.value, event.target.phone.value, event.target.selectedDateString.value, event.target.selectedTime.value, event.target.selectedLocation.value, event.target.zip.value)
+        });
+
+        if (data.insert_testdrive_confirmations.returning[0].id != undefined) {
+            //alert("Test Drive Successfully Scheduled!")
+            dispatch(toggleShowStatus())
+        }
+    }
 
     return (
         <>
@@ -78,6 +94,10 @@ export default function UserFormView() {
 
                     {/* Begin User Form */}
                     <form onSubmit={submitForm}>
+                        <input name={"selectedLocation"} value={selectedLocation.id} hidden={true} readOnly={true} />
+                        <input name={"selectedDateString"} value={selectedDateString} hidden={true} readOnly={true} />
+                        <input name={"selectedTime"} value={selectedTime} hidden={true} readOnly={true} />
+
                         <div className={"container h-fit px-4"}>
                             <p className={"font-semibold text-center pt-2 pb-4"}>Enter Your Details</p>
 
@@ -95,6 +115,7 @@ export default function UserFormView() {
                                         id="name"
                                         className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                         placeholder="Full Name"
+                                        required={true}
                                     />
                                 </div>
                             </div>
@@ -113,6 +134,7 @@ export default function UserFormView() {
                                         id="email"
                                         className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                         placeholder="Email Address"
+                                        required={true}
                                     />
                                 </div>
                             </div>
@@ -131,6 +153,7 @@ export default function UserFormView() {
                                         id="phone"
                                         className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                         placeholder="Phone Number"
+                                        required={true}
                                     />
                                 </div>
                             </div>
@@ -149,6 +172,7 @@ export default function UserFormView() {
                                         id="zip"
                                         className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                         placeholder="Zip Code"
+                                        required={true}
                                     />
                                 </div>
                             </div>
@@ -166,15 +190,6 @@ export default function UserFormView() {
         </>
     )
 }
-
-
-const submitForm = async (event: any) => {
-    event.preventDefault();
-    const { data } = await client.mutate({
-        mutation: ConfirmTestDrive
-    });
-    alert("Test Drive Successfully Scheduled!")
-};
 
 function getLongDateString(date: string) {
     const tempDate = new Date();

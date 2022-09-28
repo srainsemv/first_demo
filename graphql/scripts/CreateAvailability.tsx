@@ -10,11 +10,9 @@ export const CreateVehicle = (vin: string, gen: string, color: string, location:
     }
 `;
 
-export const CreateAvailability = (date: string, vehicle: number) => gql`
+export const CreateAvailability = (instances: string[]) => gql`
     mutation CreateAvailability {
-      insert_testdrive_availability(objects:
-       {date: "${date}", vehicle: ${vehicle}, t0: false, t1: false, t2: false, t3: false, t4: false, t5: false, t6: false, t7: false, t8: true, t9: true, t10: true, t11: true, t12: true, t13: true, t14: true, t15: true, t16: true, t17: true, t18: true, t19: false, t20: false, t21: false, t22: false, t23: false}
-       ) {
+      insert_testdrive_availability(objects: [${instances}]) {
         returning {
           id
         }

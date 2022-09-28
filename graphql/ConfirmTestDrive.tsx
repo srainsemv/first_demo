@@ -1,10 +1,10 @@
 import {gql} from "@apollo/client";
 
-export const ConfirmTestDrive = gql`
+export const ConfirmTestDrive = (name: string, email:string, phone:string, date:string, time:string, location:number, zip:string) => gql`
     mutation InsertConfirmTestDrive {
-      insert_testdrive_confirmations(objects: {name: "Stephen Rains", email: "test@gmail.com", phone: "1112223333", date: "09/27/2022", time: "3:00 PM", location: 1, zip: "00000"}) {
+      insert_testdrive_confirmations(objects: {name: "${name}", email: "${email}", phone: "${phone}", date: "${date}", time: "${time}", location: ${location}, zip: "${zip}"}) {
         returning {
-          name
+          id
         }
       }
     }
